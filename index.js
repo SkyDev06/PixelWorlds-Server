@@ -67,6 +67,15 @@ function PacketProcessing(data, socket) {
             case "TTjW":
                 
                 break;
+            case "RenamePlayer":
+                let username = current["UN"];
+                console.log("Renaming player to " + username);
+                SendPacket({
+                    ID: "RenamePlayer",
+                    S: true,
+                    UN: username
+                });
+                break;
             case "ST":
                 SendPacket({
                     ID: "ST",
@@ -75,10 +84,21 @@ function PacketProcessing(data, socket) {
                 });
                 break;
             case "MWli":
-                SendPacket({
-                    ID: "MWli",
-                    Ct: Math.floor(Math.random() * 50),
-                });
+                if (!fs.existsSync(`./world/${current["WN"]}.json`)) {
+                    SendPacket({
+                        ID: "MWli",
+                        WN: current["WN"],
+                        Ct: -3
+                    });
+                }
+                else {
+                    SendPacket({
+                        ID: "MWli",
+                        WN: current["WN"],
+                        Ct: Math.floor(Math.random() * 50)
+                    });
+                }
+                break;
             default:
                 console.log("Unknown message ID: " + messageId);
                 SendPacket({
